@@ -1,0 +1,29 @@
+# .gitignore for Python projects with venv
+
+# Ignore the virtual environment directory
+venv/
+
+# Ignore Python bytecode files, __pycache__, and *.pyc files
+*.pyc
+__pycache__/
+
+# Ignore environment-specific files
+.env
+
+# Ignore local development settings
+*.local
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore any generated files or artifacts
+*.pyo
+*.pyc
+*.pyd
+__pycache__/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+lib
