@@ -1,0 +1,8 @@
+ if (idx === 1) return SubmittedStatus.TLE;
+if (idx === 2) return SubmittedStatus.MLE;
+if (idx === 3) return SubmittedStatus.RE;
+if (idx === 4) return SubmittedStatus.CE;
+if (idx === 5) return SubmittedStatus.AC;
+if (idx === 6) return SubmittedStatus.WA;
+if (idx === 7) return SubmittedStatus.Pending;
+if (idx === 8) return SubmittedStatus.Running;

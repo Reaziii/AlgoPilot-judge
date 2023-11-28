@@ -1,0 +1,6 @@
+# Exclude directories
+bin/
+include/
+
+# Exclude specific files
+file_to_exclude.txt

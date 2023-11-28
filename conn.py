@@ -36,11 +36,11 @@ class Connection:
             # request to check if the server is free
             @self.sio.on("areyoufree")
             def checkfree(data):
-                print("areyoufree")
-                print(is_processor_free())
+                print("Hey I have new job!!!!")
                 if(is_processor_free()):
                     yes_i_am_free()
-
+                else:
+                    print("But I am not free")
 
             # lets handle the disconnect too
             @self.sio.on("disconnect")
