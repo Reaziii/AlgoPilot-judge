@@ -1,7 +1,6 @@
 import socketio
 from status import status
 from serverstatus import is_processor_free
-import requests 
 from apirequests import yes_i_am_free
 class Connection:
     sio = socketio.Client()
@@ -20,11 +19,7 @@ class Connection:
 
     def connect(self):
         try:
-            # fetchurl = self.server+"/api/socket"
-            # headers = {"Content-Type": "application/json"}
-            # response = requests.get(fetchurl, headers=headers)
-            # if response.status_code != 200:
-            #     raise ""
+         
             print("connecting...")
             #after connecting to the server ws
             @self.sio.on("connect")

@@ -17,15 +17,6 @@ def copy_code_to_maincpp(subid,code):
         print(e)
         return False
     
-# def copy_code_to_checker(subid,code):
-#     try:
-#         with open(subid+"/checker.cpp", "w") as file:
-#             file.write(code)
-#         return True
-#     except Exception as e:
-#         print(e)
-#         return False
-    
 def copy_testcase_to_input(subid,input, output,tcid, key):
     try:
         with open(subid+f"/input{str(key)}.txt", "w") as file:

@@ -6,8 +6,6 @@ from files import (
     delete_submission_file
 )
 import os
-import subprocess
-
 
 def start_running(
     code, checker, testcases, timelimit, memorylimit, sub_id, checker_enable
@@ -32,7 +30,7 @@ def start_running(
     add_code_details(sub_id, timelimit, memorylimit)
     copy_testcases(sub_id, testcases, checker)
     run_code(sub_id)
-    # delete_submission_file(sub_id)
+    delete_submission_file(sub_id)
 
     return True
 

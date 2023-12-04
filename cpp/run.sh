@@ -1,12 +1,14 @@
 #!/bin/bash
 time_limit=$(cat timelimit.txt)
 memory_limit=$(cat memorylimit.txt)
+bserver=http://192.168.1.228:8000/judge/verdict
 
 send_api_request() {
     subid=$(cat subid.txt)
     tcid=$(cat testcase$1.txt)
-    api_url="http://192.168.1.228:8000/judge/verdict/$subid/$tcid"
-    data="{\"status\": ${2}}"
+    api_url="$bserver/$subid/$tcid"
+    data=$2
+    echo $data
     response=$(curl -s -X POST "$api_url" -H "Content-Type: application/json"  -d "$data" -i)
     http_status=$(echo "$response" | head -n 1 | cut -d' ' -f2)
     if [ "$http_status" == "200" ]; then
@@ -17,16 +19,17 @@ send_api_request() {
     fi
 }
 
+tempverdict=1
 
-g++ -Wall -Wextra -Werror main.cpp -o main.out 2>>error
+g++ -Wall -fsanitize=undefined main.cpp -o main
 
 # Check if compilation was successful
 if [ $? -eq 0 ]; then
     echo "Compilation successful. Running the program:"
     # Run the compiled program
 else
-    send_api_request 0 4
-    exit 0
+    tempverdict=0
+    send_api_request 0 "{\"status\" : \"4\"}"
 fi
 
 
@@ -46,38 +49,37 @@ compare_outputs() {
 
 
 
-for i in {0..100}
+for i in {0..1000}
 do 
     input="input${i}.txt"
     output="output${i}.txt"
+    
     if [ -e "$input" ]; then
-        test="test.txt"
-        send_api_request $i 8
-        (ulimit -v "$memory_limit"; timeout "$time_limit" ./main.out < "$input" > "$test")
-        ulimit -v unlimited
-        st=$?
-        if [ $st -eq 124 ];then
-            send_api_request $i 1
-        elif [ $st -eq 126 ];then
-            send_api_request $i 4
-        elif [ $st -eq 139 ]; then
-            send_api_request $i 3
-        elif [ $st -eq 134 ]; then
-            send_api_request $i 3
+        if [ $tempverdict -eq 0 ];then
+            if [ $i -ne 0 ];then
+                send_api_request $i "{\"status\" : \"9\"}"
+            fi
         else
-            compare_outputs $output $test
-            status=$?
-            echo $status
-            if [ $status -eq 1 ]; then
-                send_api_request $i 5
-            
+            test="test.txt"
+            error="error.txt"
+            send_api_request $i "{\"status\" : \"8\"}"
+            timeout "$time_limit" bash -c  "ulimit -v $memory_limit && ./main.out < $input > $test 2>>errors.txt"
+            outputx=$(./Judgerv2 cpp main "$memory_limit" "$time_limit" "$input" "$test" "$error")
+            if [ -e "$test" ];then
+                compare_outputs $output $test
+                status=$?
+                send_api_request $i "{ \"status\" : \"$status\", \"judge\" : $outputx }"
+                tempverdict=$status
             else 
-                cat $output
-                cat $test
-                send_api_request $i 6
+                send_api_request $i "{ \"status\" : \"-1\", \"judge\" : $outputx }"
+                tempverdict=0
             fi
         fi
-    else
-       break
+
+    else 
+        break
     fi
 done
+
+
+send_api_request 0 "{\"status\" : \"100\"}"
